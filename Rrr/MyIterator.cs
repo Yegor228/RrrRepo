@@ -1,43 +1,74 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Rrr;
 
-namespace Rrr
+internal class MyIterator
 {
-    internal class MyIterator<T>
+    public int value;
+    private Predicate<int> _predicate;
+    public int flag = 0;
+    public int takeCount = -1;
+    public int takeTmp = 0;
+
+    public int Current => value;
+
+
+    public void Dispose()
+    { Console.WriteLine("Dispose!"); }
+
+    public MyIterator GetEnumerator()
     {
-        public SomeIterator<T> SI;
-        public int Index;
-        public MyWhereEnumerator<T> MWE;
+        return this;
+    }
 
-        public T Current
-        {
-            get
-            {
-                int pos = Index + SI.StartingPoint;
-                pos = pos % SI.Length();
-                return SI[pos];
-            }
-        }
+    public void Add(int val)
+    {
+        value = val;
+    }
 
-        public void Reset()
+    public bool MoveNext()
+    {
+        switch (flag)
         {
-            Index = -1;
+            case 0:
+                while (takeTmp != takeCount)
+                {
+                    takeTmp++;
+                    value++;
+                    return true;
+                }
+                return false;
+            case 1:
+                while (takeTmp != takeCount)
+                {
+                    value++;
+                    var tmp = Current;
+                    if (_predicate(tmp))
+                    {
+                        takeTmp++;
+                        return true;
+                    }
+                }
+                return false;
         }
+        return false;
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+    }
 
-        public void Dispose(bool disposing)
-        {
-            if (disposing)
-                return;
-            disposing = true;
-        }
+    public void Reset()
+    {
+        value = default(int);
+    }
+
+    public MyIterator MyWhere(Predicate<int> predicate)
+    {
+        _predicate = predicate;
+        flag = 1;
+        return this;
+    }
+
+    public MyIterator MyTake(int num)
+    {
+        takeCount = num;
+        return this;
     }
 }
+
