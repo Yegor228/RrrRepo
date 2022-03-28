@@ -4,9 +4,9 @@ internal class Program
     static void Main(string[] args)
     {
 
-        MyEnumerator myEnum = new MyEnumerator(GetEnumaration());
-
-        foreach(var a in myEnum.MyWhere(p => p % 2 == 0).MyTake(10))
+        SomeIterator some = new SomeIterator(GetEnumaration());
+        
+        foreach(var a in some.MyWhere(p => p % 2 == 0).MyTake(1))
             Console.WriteLine(a);
 
     }
