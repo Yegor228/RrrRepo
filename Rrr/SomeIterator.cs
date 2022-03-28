@@ -4,7 +4,7 @@ namespace Rrr
 {
     internal class SomeIterator : IEnumerator<int>, IEnumerable<int>
     {
-        private IEnumerator<int> _iterator;
+        private IEnumerator<int>? _iterator;
         private int _value;
 
         public int Current => _value;
@@ -15,13 +15,18 @@ namespace Rrr
             _iterator = iterator.GetEnumerator();
         }
 
-        public bool MoveNext()
+        public SomeIterator(){ }
+
+        public virtual bool MoveNext()
         {
-            while(_iterator.MoveNext())
+            if(_iterator != null)
             {
-                _value = _iterator.Current;
-                return true;
-            }
+                while (_iterator.MoveNext())
+                {
+                    _value = _iterator.Current;
+                    return true;
+                }
+            }  
             return false;
         }
         public IEnumerator<int> GetEnumerator() => this;
